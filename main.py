@@ -1,5 +1,5 @@
 from pwn import *
-import sys, re, networkx
+import sys, re, networkx, json
 from getpass import getpass
 from telnetlib import Telnet
 
@@ -14,7 +14,7 @@ def parseCdpNeighbor(data):
     blockPattern = re.compile(r'(?<=Device ID: ).*?(?=-----|\Z)', flags=re.DOTALL)
     ipPattern = re.compile(r'(?<=IP address: ).*')
     interfacePattern = re.compile(r'(?<=Interface: ).*?(?=, )')
-    portIdPattern = re.compile(r'(?<=Port ID \(outgoing port\): ).*')
+    portIdPattern = re.compile(r'(?<=Port ID \(outgoing port\): ).*(?=\r)')
     blocks = blockPattern.findall(data)
     for block in blocks:
         node = {}
@@ -91,3 +91,5 @@ if __name__ == '__main__':
 
     search(io)
     printList()
+    with open('networkLayout.json', 'w') as f:
+        f.write(json.dumps(adjList))
